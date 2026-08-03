@@ -223,3 +223,4 @@ mlops_env/
 02-experiment-tracking/mlruns/
 02-experiment-tracking/output/
 artifacts/
+03-orchestration/models/
