@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-
 import pickle
+from datetime import datetime
 from pathlib import Path
 
 import mlflow
 import pandas as pd
 import xgboost as xgb
+from dateutil.relativedelta import relativedelta
 from prefect import flow, task
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.metrics import root_mean_squared_error
@@ -89,13 +90,15 @@ def train_model(X_train, y_train, X_val, y_val, dv):
         return run.info.run_id
 
 
-@flow(name="HW3 - STEP 3 : Orchestrating the Workflow")
+@flow
 def run(year, month):
-    df_train = read_dataframe(year=year, month=month)
+    train_date = (
+        datetime(year, month, 1) - relativedelta(years=1) - relativedelta(months=1)
+    )
+    df_train = read_dataframe(year=train_date.year, month=train_date.month)
 
-    next_year = year if month < 12 else year + 1
-    next_month = month + 1 if month < 12 else 1
-    df_val = read_dataframe(year=next_year, month=next_month)
+    val_date = datetime(year, month, 1) - relativedelta(years=1)
+    df_val = read_dataframe(year=val_date.year, month=val_date.month)
 
     X_train, dv = create_X(df_train)
     X_val, _ = create_X(df_val, dv)
@@ -109,21 +112,16 @@ def run(year, month):
     return run_id
 
 
+@flow(name="HW3 - STEP 4 :scheduled-flow")
+def scheduled_run(execution_date: datetime | None = None):
+    if execution_date is None:
+        execution_date = datetime.now()
+    run_id = run(year=execution_date.year, month=execution_date.month)
+    return run_id
+
+
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="Train a model to predict taxi trip duration."
+    scheduled_run.serve(
+        name="hourly-HW3-scheduled-flow",
+        cron="06 * * * *",  # S'exécute toutes les heures
     )
-    parser.add_argument(
-        "--year", type=int, required=True, help="Year of the data to train on"
-    )
-    parser.add_argument(
-        "--month", type=int, required=True, help="Month of the data to train on"
-    )
-    args = parser.parse_args()
-
-    run_id = run(year=args.year, month=args.month)
-
-    with open("run_id.txt", "w") as f:
-        f.write(run_id)
