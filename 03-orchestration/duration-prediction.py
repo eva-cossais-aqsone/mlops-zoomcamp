@@ -124,6 +124,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     run_id = run(year=args.year, month=args.month)
-
-    with open("run_id.txt", "w") as f:
-        f.write(run_id)

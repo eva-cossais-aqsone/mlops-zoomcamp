@@ -112,7 +112,10 @@ def run(year, month):
     return run_id
 
 
-@flow(name="HW3 - STEP 4 :scheduled-flow")
+@flow(
+    name="HW3 - STEP 4 : scheduled-flow",
+    flow_run_name="run-execution-date-{execution_date.year:04d}-{execution_date.month:02d}",
+)
 def scheduled_run(execution_date: datetime | None = None):
     if execution_date is None:
         execution_date = datetime.now()
