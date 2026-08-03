@@ -1,0 +1,8 @@
+pandas
+pyarrow
+scikit-learn
+xgboost
+mlflow
+prefect
+python-dateutil
+requests
