@@ -219,3 +219,7 @@ __marimo__/
 
 .venv/
 mlops_env/
+00-data/
+02-experiment-tracking/mlruns/
+02-experiment-tracking/output/
+artifacts/
