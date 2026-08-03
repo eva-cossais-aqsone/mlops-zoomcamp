@@ -10,7 +10,7 @@ def say_hello():
     print("Hello World!")
 
 
-@flow
+@flow(name="STEP 2 : Running the Tool", flow_run_name="hello-world-run")
 def hello_flow():
     say_hello()
 
