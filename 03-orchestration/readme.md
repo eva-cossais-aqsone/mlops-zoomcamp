@@ -12,7 +12,6 @@ python scheduled-duration-prediction.py
 **Lancer :**
 
 ```
-prefect cloud login -k <CLE_API_PREFECT>
 ssh -i "path/mlops-key.pem" ec2-user@<IP-PUBLIQUE-EC2>
 ```
 
@@ -20,6 +19,7 @@ _dans le terminal ssh :_
 ```
 cd mlops-zoomcamp/03-orchestration
 git pull
+prefect cloud login -k <CLE_API_PREFECT>
 nohup mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host 0.0.0.0 --port 5000 > mlflow.log 2>&1 &
 ```
 
